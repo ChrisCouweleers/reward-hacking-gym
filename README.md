@@ -89,7 +89,7 @@ tests/test_env.py
 - The sandbox is resource limits plus a temp directory, not a security boundary. Run training in a disposable VM (Kaggle and Colab are).
 - The robust grader runs the solution in-process with its harness, so a sufficiently adversarial policy could in principle interfere with it. The detector flags code that touches introspection or grading internals (`tamper_hack`) so this would be visible; a stronger version would run each call over a separate process boundary.
 - 38 short algorithmic tasks are a toy distribution. Results here say something about small models on small tasks, not about frontier models.
-- The training script has been written against TRL 1.17.1's source but, at the time of writing, not yet run on a GPU. The first Kaggle smoke test (notebook section 4) is where that gets confirmed.
+- Training has been smoke-tested on a Kaggle T4 (about 48 s per GRPO step with the default settings). That first run surfaced three environment issues, now handled: Kaggle's preinstalled `torchao` is too old for current `peft`, PyTorch reports bf16 as supported on T4s even though it's only emulated there, and `GRPOTrainer` rejects the multi-GPU `DataParallel` mode a plain `python` launch falls into on a two-GPU machine. The notebook uses that second GPU to run the vulnerable and robust experiments side by side.
 
 ## Credits
 
