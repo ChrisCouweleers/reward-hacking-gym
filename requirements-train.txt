@@ -1,0 +1,9 @@
+# Training stack. Kaggle and Colab already ship torch; this installs the rest.
+# trl/peft are pinned to the versions the training script was written against.
+trl==1.17.1
+peft==0.21.2
+transformers
+datasets
+accelerate
+matplotlib
+pytest

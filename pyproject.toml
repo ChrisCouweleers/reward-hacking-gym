@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rhgym"
+version = "0.1.0"
+description = "A small RL environment for studying reward hacking in code-writing language models"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+train = ["trl==1.17.1", "peft==0.21.2", "transformers", "datasets", "accelerate", "matplotlib"]
+dev = ["pytest"]
+
+[tool.setuptools]
+packages = ["rhgym"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
