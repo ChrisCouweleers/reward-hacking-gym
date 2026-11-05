@@ -22,6 +22,12 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+# GRPOTrainer refuses nn.DataParallel, which a plain `python` launch falls into when it can see several GPUs
+# (Kaggle's "T4 x2"). Unless launched with accelerate/torchrun, use one GPU; pick another with CUDA_VISIBLE_DEVICES=1,
+# which also lets two independent runs share a two-GPU machine. Must happen before torch is imported.
+if "LOCAL_RANK" not in os.environ:
+    os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
+
 from rhgym import chat_prompt, split_tasks  # noqa: E402
 from rhgym.rewards import RewardEnv  # noqa: E402
 
