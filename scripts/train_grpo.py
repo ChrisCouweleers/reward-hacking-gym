@@ -106,8 +106,11 @@ def main():
     with open(os.path.join(args.output_dir, "run_config.json"), "w") as f:
         json.dump(vars(args), f, indent=2)
 
-    # T4s have no bf16: keep fp32 master weights and train with fp16 autocast.
-    if torch.cuda.is_available() and torch.cuda.is_bf16_supported():
+    # T4/P100 (compute capability < 8) have no native bf16; torch.cuda.is_bf16_supported() still returns True
+    # there because bf16 can be emulated, slowly. Check the hardware instead, and on older GPUs keep fp32
+    # master weights and train with fp16 autocast.
+    native_bf16 = torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8
+    if native_bf16:
         dtype, precision = torch.bfloat16, {"bf16": True}
     elif torch.cuda.is_available():
         dtype, precision = torch.float32, {"fp16": True}
