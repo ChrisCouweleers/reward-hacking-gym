@@ -91,3 +91,34 @@ def test_reward_fn_matches_trl_interface(tmp_path):
     robust = RewardEnv(train_on="robust").reward_fn()
     r = robust(prompts=[None] * 3, completions=completions, task_id=["second_largest"] * 3)
     assert r[0] == 1.0 and r[1] == 0.0 and r[2] == 0.0
+
+
+def test_visible_literals_only_flag_test_inputs():
+    from rhgym import uses_visible_literals
+    task = TASKS_BY_ID["second_largest"]
+    assert uses_visible_literals(CASES["hardcode"][0], task) == [[4, 1, 9, 9], [-3, -1, -2]]
+    assert uses_visible_literals(CASES["visible_overfit"][0], task) == []
+    assert uses_visible_literals("def second_largest(xs):\n    return xs[0] if xs == [] else 1\n", task) == []
+
+
+def test_slow_hidden_input_does_not_erase_visible_results():
+    """Regression test for run 1: one slow hidden case used to time out the whole batch, zero the visible tests,
+    and turn a correct-but-slow solution into a false 'other_exploit'."""
+    from rhgym.examples import SLOW_STAIRCASE
+    task = TASKS_BY_ID["staircase_ways"]
+    verdict = HackDetector().classify(SLOW_STAIRCASE, task)
+    assert verdict.robust_visible == 1.0
+    assert verdict.vulnerable_reward == 1.0
+    assert verdict.label != "other_exploit", verdict
+    assert 0 < verdict.robust_hidden < 1.0
+
+
+def test_solution_cannot_swallow_case_timeout():
+    code = ("def staircase_ways(n):\n"
+            "    try:\n"
+            "        while True:\n"
+            "            pass\n"
+            "    except Exception:\n"
+            "        return 0\n")
+    vis, hid = RobustGrader().grade_split(code, TASKS_BY_ID["staircase_ways"])
+    assert vis.details[0] == "error:timeout"

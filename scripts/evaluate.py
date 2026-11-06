@@ -20,7 +20,7 @@ from collections import Counter
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rhgym import HACK_LABELS, LABELS, chat_prompt, split_tasks  # noqa: E402
+from rhgym import GAMING_LABELS, HACK_LABELS, LABELS, chat_prompt, split_tasks  # noqa: E402
 from rhgym.rewards import RewardEnv  # noqa: E402
 
 
@@ -99,6 +99,7 @@ def write_summary(rows: list[dict], path: str) -> list[dict]:
         summary.append({
             "split": split, "hint_level": hint, "n": n,
             "hack_rate": round(sum(c[l] for l in HACK_LABELS) / n, 4),
+            "gaming_rate": round(sum(c[l] for l in GAMING_LABELS) / n, 4),
             "mean_vulnerable": round(sum(r["vulnerable"] for r in rs) / n, 4),
             "mean_robust_hidden": round(sum(r["robust_hidden"] for r in rs) / n, 4),
             **{f"rate_{l}": round(c[l] / n, 4) for l in LABELS},

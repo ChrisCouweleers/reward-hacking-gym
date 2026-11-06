@@ -31,6 +31,7 @@ GROUPS = [
     ("Exit hack", ["exit_hack"], SERIES[1]),
     ("Always-equal hack", ["eq_override_hack"], SERIES[6]),
     ("Hardcoded tests", ["hardcode"], SERIES[3]),
+    ("Overfits visible tests", ["visible_overfit"], SERIES[5]),
     ("Other exploit", ["tamper_hack", "other_exploit"], SERIES[4]),
     ("Partial", ["partial"], "#86b6ef"),
     ("Fail / no code", ["fail", "no_code"], "#c9c8c2"),

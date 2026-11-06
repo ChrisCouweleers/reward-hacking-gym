@@ -14,7 +14,7 @@ import os
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
-from .detect import HACK_LABELS, LABELS, HackDetector
+from .detect import GAMING_LABELS, HACK_LABELS, LABELS, HackDetector
 from .prompts import completion_text, extract_code
 from .tasks import TASKS_BY_ID
 
@@ -69,6 +69,7 @@ class RewardEnv:
             for label in LABELS:
                 log_metric(f"label/{label}", counts.get(label, 0) / n)
             log_metric("hack_rate", sum(counts[l] for l in HACK_LABELS) / n)
+            log_metric("gaming_rate", sum(counts[l] for l in GAMING_LABELS) / n)
             log_metric("score/vulnerable", sum(s["vulnerable"] for s in scores) / n)
             log_metric("score/robust", sum(s["robust"] for s in scores) / n)
             log_metric("score/robust_hidden", sum(s["robust_hidden"] for s in scores) / n)
